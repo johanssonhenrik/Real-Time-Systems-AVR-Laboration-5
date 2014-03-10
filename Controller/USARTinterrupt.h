@@ -5,12 +5,18 @@
  *  Author: ehioja-0
  */ 
 
+#ifndef __USARTINTERRUPT_H_
+#define __USARTINTERRUPT_H_
 
-#ifndef USARTINTERRUPT_H_
-#define USARTINTERRUPT_H_
+typedef struct{
+	Object super;
+	int receivedUSART;			//This must be changed when interrupt is received from USART PC.
+	//int sendtoAVRGUI;			//Used for sending LCD data to GUI. When receiving or sending USART, the LCD must display segments.
+	//int sendtoController;		//Used for sending control data to Controller. Used for creating USART message to be sent.
+}USART;
 
+void receivedUSARTfromPC(USART *this);
 
+#define initUSARTinterrupt(receivedUSART){initObject(),receivedUSART}
 
-
-
-#endif /* USARTINTERRUPT_H_ */
+#endif __USARTINTERRUPT_H_

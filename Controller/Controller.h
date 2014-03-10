@@ -5,12 +5,21 @@
  *  Author: ehioja-0
  */ 
 
+#ifndef __CONTROLLER_H_
+#define __CONTROLLER_H_
 
-#ifndef CONTROLLER_H_
-#define CONTROLLER_H_
+typedef struct{
+	Object super;
+	int northqueue;				//Keep track of the number of cars in each queue.
+	int southqueue;
+	int timer;					//Used to send USART interrupt periodically.
+	USART receivedUSART;
+} Controller;
 
+void northTL(Controller *this, int northqueue, int southqueue);		//TrafficLight methods. Used for switching between ON/OFF State.
+void southTL(Controller *this, int northqueue, int southqueue);
+void sendUSART(Controller *this);
 
+#define initController(northqueue,southqueue,timer,receivedUSART){initObject(),northqueue,southqueue,timer,receivedUSART}
 
-
-
-#endif /* CONTROLLER_H_ */
+#endif __CONTROLLER_H_
