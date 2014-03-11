@@ -5,17 +5,32 @@
  *  Author: ehioja-0
  */ 
 
-#define FOSC 1843200
-#define BAUD 9600
-#define MYUBRR FOSC/16/BAUD-1
-	 
-//USART Interrupt initialization
-	//PRR = 0x02;					//"PRUSART0" (PRR) = 0, to enable USART Module.
-	
-	UBRRH = (unsigned char)(ubrr>>8);
-	UBBRL = (unsigned char)ubrr;
-	
-	UCSRB =(1<<RXEN | 1<<TXEN);		//Enable receiver and transmitter.
-	UCSRC = (1|USBS)|(3<<UCSZ0);	//Set frame format: 8data, 2 stop bit.
-	
-	UDRE AND TXC for interrupt
+#define CPUFREQ 8000000UL
+#define USART_BAUDRATE 9600
+#define BAUD_PRESCALE (((CPUFREQ / (USART_BAUDRATE * 16UL))) - 1)
+
+#include "TinyTimber.h"
+#include "Init.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+ 
+void Init(){
+
+//Clock prescaler
+	CLKPR = 0x80;
+	CLKPR = 0x00;
+//LCD
+	LCDCRA = 0xC0;			//LCD ENABLE and LOW POWER WAVEFORM
+	LCDCRB = 0xB7;			//AsyncClock, 1/3 Bias, 1/4 Duty, 25 Segments 
+	LCDFRR = 0x07;			//LCD Clock Divide 32 Hz
+	LCDCCR = 0x0F;			//3.35 Volt		
+	TCCR1B = 0x0D;			//Clock prescaler set to 1024 and CFC.
+//INTERRUPT
+	EIFR = 0xc0;			//Interrupt request
+	EIMSK = 0xc0;			//Cause an interrupt
+//USART	
+	UBRR0H = BAUD_PRESCALE>>8;
+	UBRR0L = BAUD_PRESCALE;
+	UCSR0B = (1<<RXCIE0)|(1<<RXEN0)|(1<<TXEN0);
+	UCSR0C = (1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);
+}

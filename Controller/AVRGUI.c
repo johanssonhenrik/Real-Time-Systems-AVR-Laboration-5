@@ -54,42 +54,43 @@ void writeChar(AVRGUI *self, int pos, int bokstav){
 		lcddr += 5;
 	}
 }
-void printAt(AVRGUI *self, int pulseActive){
-	int num;
-	int pp;
-	if(pulseActive == 0){
-		num = self->northqueue->northqueue;
-		pp = 0;
-		num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,	'0' = 48.
-		writeChar(self, pp, num);					//&self -> address, self -> värde.
-		pp = 1;
-		num = ((self->northqueue->northqueue % 10));			//num % 10 + '0', pp,
-		writeChar(self, pp, num);
-	}else{
-		num = self->southqueue->southqueue;
-		pp = 3;
-		num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,
-		writeChar(self, pp, num);
-		pp = 4;
-		num = ((self->southqueue->southqueue % 10));		//num % 10 + '0', pp,
-		writeChar(self, pp, num);
-	}
+void printat(AVRGUI *self){
+	writeChar(self,0,1);
+	//int num;
+	//int pp;
+	//if(pulseactive == 0){
+		//num = self->northqueue->northqueue;
+		//pp = 0;
+		//num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,	'0' = 48.
+		//writechar(self, pp, num);					//&self -> address, self -> värde.
+		//pp = 1;
+		//num = ((self->northqueue->northqueue % 10));			//num % 10 + '0', pp,
+		//writechar(self, pp, num);
+	//}else{
+		//num = self->southqueue->southqueue;
+		//pp = 3;
+		//num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,
+		//writechar(self, pp, num);
+		//pp = 4;
+		//num = ((self->southqueue->southqueue % 10));		//num % 10 + '0', pp,
+		//writechar(self, pp, num);
+	//}
 }
-void update(AVRGUI* self, int pulseActive){
-	printAt(self, 0);									//pulseActive 0..
-	printAt(self, 1);									//or 1
+void update(AVRGUI* self){
+	printat(self);									//pulseActive 0..
+	//printAt(self, 1);									//or 1
 }
 
 void writeSegment(AVRGUI *self, int northqueue, int southqueue){
 	
-	if(self->pulseUsed == 0){							//To check where we are. Move from current pulse to the next.								
-		LCDDR17 = 0x10 | LCDDR17;						//default pulseUsed = 1. (pulse2)
-		LCDDR16 = 0xFE & LCDDR16;
-		self->pulseUsed = 1;
-		
-	}else if(self->pulseUsed == 1){
-		LCDDR17 = 0xEF & LCDDR17;
-		LCDDR16 = 0x01 | LCDDR16;
-		self->pulseUsed = 0;
-	}
+	//if(self->pulseUsed == 0){							//To check where we are. Move from current pulse to the next.								
+		//LCDDR17 = 0x10 | LCDDR17;						//default pulseUsed = 1. (pulse2)
+		//LCDDR16 = 0xFE & LCDDR16;
+		//self->pulseUsed = 1;
+		//
+	//}else if(self->pulseUsed == 1){
+		//LCDDR17 = 0xEF & LCDDR17;
+		//LCDDR16 = 0x01 | LCDDR16;
+		//self->pulseUsed = 0;
+	//}
 }

@@ -5,14 +5,17 @@
  *  Author: ehioja-0
  */ 
 
-#include "TinyTimber.h"
 #include "USARTinterrupt.h"
 
 void receivedUSARTfromPC(USART *self){
+
+	uint8_t TestData = UDR0;
+	UDR0 = TestData + 1;	
+	//LCDDR17 = 0x10;				//Initial d section lit
+	//ASYNC(self->gui,printat,0);
+	ASYNC(self->cont,bitwiseUSART,0);
+}
+void sendUSARTtoPC(USART *self, int datatosend){
 	
-	//Here we must parse the USART Interrupt from 4 bits.
-	//Depending on the bits. Corresponding method must be called.
-	
-	//ASYNC(self->receivedUSART, Gate, self->whichpulse);
 }
 

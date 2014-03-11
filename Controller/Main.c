@@ -5,16 +5,20 @@
  *  Author: ehioja-0
  */ 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "AVRGUI.h"
 #include "USARTinterrupt.h"
 #include "TinyTimber.h"
+#include "Init.h"
 
-USART u = initUSARTinterrupt(0);							//receivedUSART
-Controller c = initController(0,0,0,0);						//northqueue,southqueue,timer,receivedUSART
-AVRGUI g = initAVRGUI(&sendingUSART,&receivingUSART,0,0);	//sendingUSART, receivingUSART, northqueue, southqueue
+Controller c = initController(0,0,0);				//northqueue,southqueue,timer,receivedUSART
+AVRGUI g = initAVRGUI();							//northqueue, southqueue
+USART u = initUSARTinterrupt(&g, &c);				//receivedUSART
 
 int main(void){
 
+	Init();
 	INSTALL(&u, receivedUSARTfromPC, IRQ_USART0_RX);
-	return TINYTIMBER(&g, update, 0);						//object, method, variable (pulseActive)
+	sei();
+	return TINYTIMBER(&u, sendUSARTtoPC, 0);						//object, method, variable (pulseActive)
 }

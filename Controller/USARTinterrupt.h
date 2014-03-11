@@ -8,15 +8,23 @@
 #ifndef __USARTINTERRUPT_H_
 #define __USARTINTERRUPT_H_
 
+#include "AVRGUI.h"
+#include "Controller.h"
+#include "TinyTimber.h"
+#include "avr/io.h"
+
 typedef struct{
 	Object super;
-	int receivedUSART;			//This must be changed when interrupt is received from USART PC.
+	AVRGUI *gui;
+	Controller *cont;
+	//int receivedUSART;		//This must be changed when interrupt is received from USART PC.
 	//int sendtoAVRGUI;			//Used for sending LCD data to GUI. When receiving or sending USART, the LCD must display segments.
 	//int sendtoController;		//Used for sending control data to Controller. Used for creating USART message to be sent.
 }USART;
 
 void receivedUSARTfromPC(USART *this);
+void sendUSARTtoPC(USART *self, int datatosend); // behövs ej!
 
-#define initUSARTinterrupt(receivedUSART){initObject(),receivedUSART}
+#define initUSARTinterrupt(gui, cont){initObject(),gui,cont};
 
 #endif __USARTINTERRUPT_H_

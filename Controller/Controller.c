@@ -19,7 +19,21 @@ void southTL(Controller *this, int northqueue, int southqueue){
 	
 	
 }
-
+void bitwiseUSART(Controller *this){
+	
+	if(self )
+	{
+	}
+	if(this )
+	{
+	}
+	if(this )
+	{
+	}
+	if(this )
+	{
+	}
+}
 
 
 
