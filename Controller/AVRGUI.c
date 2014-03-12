@@ -54,11 +54,11 @@ void writeChar(AVRGUI *self, int pos, int bokstav){
 		lcddr += 5;
 	}
 }
-void printat(AVRGUI *self){
-	writeChar(self,0,1);
+void printat(AVRGUI *self, int pulseActive){
+
 	//int num;
 	//int pp;
-	//if(pulseactive == 0){
+	//if(pulseActive == 0){
 		//num = self->northqueue->northqueue;
 		//pp = 0;
 		//num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,	'0' = 48.
@@ -76,9 +76,10 @@ void printat(AVRGUI *self){
 		//writechar(self, pp, num);
 	//}
 }
-void update(AVRGUI* self){
-	printat(self);									//pulseActive 0..
-	//printAt(self, 1);									//or 1
+void update(AVRGUI* self, int numInQueue){
+	writeChar(self, 0, numInQueue);							//pulseActive 0..
+	writeChar(self, 1, numInQueue);							//or 1.
+	
 }
 
 void writeSegment(AVRGUI *self, int northqueue, int southqueue){

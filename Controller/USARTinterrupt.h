@@ -15,16 +15,12 @@
 
 typedef struct{
 	Object super;
-	AVRGUI *gui;
 	Controller *cont;
-	//int receivedUSART;			//This must be changed when interrupt is received from USART PC.
-	//int sendtoAVRGUI;			//Used for sending LCD data to GUI. When receiving or sending USART, the LCD must display segments.
-	//int sendtoController;		//Used for sending control data to Controller. Used for creating USART message to be sent.
 }USART;
 
 void receivedUSARTfromPC(USART *this);
-void sendUSARTtoPC(USART *self, int datatosend); // behövs ej!
+void start(USART *self);
 
-#define initUSARTinterrupt(gui, cont){initObject(),gui,cont};
+#define initUSARTinterrupt(cont){initObject(),cont};
 
 #endif __USARTINTERRUPT_H_

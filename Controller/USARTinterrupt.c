@@ -10,13 +10,9 @@
 void receivedUSARTfromPC(USART *self){
 
 	uint8_t Data = UDR0;	
-	//LCDDR17 = 0x10;				//Initial d section lit
-	//ASYNC(self->gui,printat,0);
 	ASYNC(self->cont,bitwiseUSART,Data);
 }
-
-
-void sendUSARTtoPC(USART *self, int datatosend){
+void start(USART *self){
 	
 }
 

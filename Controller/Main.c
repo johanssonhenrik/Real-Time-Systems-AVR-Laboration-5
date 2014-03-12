@@ -11,14 +11,14 @@
 #include "TinyTimber.h"
 #include "Init.h"
 
-Controller c = initController(0,0,0);				//northqueue,southqueue,timer,receivedUSART
 AVRGUI g = initAVRGUI();							//northqueue, southqueue
-USART u = initUSARTinterrupt(&g, &c);				//receivedUSART
+Controller c = initController(0,0,0,0,0,&g,0);		//northqueue,southqueue,timer,maxiteration
+USART u = initUSARTinterrupt(&c);					//receivedUSART
 
 int main(void){
 
 	Init();
 	INSTALL(&u, receivedUSARTfromPC, IRQ_USART0_RX);
 	sei();
-	return TINYTIMBER(&u, sendUSARTtoPC, 0);						//object, method, variable (pulseActive)
+	return TINYTIMBER(&u, start, 0);				//object, method, variable (pulseActive)
 }
