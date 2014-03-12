@@ -8,30 +8,43 @@
 #include "TinyTimber.h"
 #include "Controller.h"
 
-void northTL(Controller *this, int northqueue, int southqueue){
+int northTL(Controller *this, int carIncrease){
 	
-	if(northqueue < 99){
-		//send to USARTinterrupt. Possible to have an intermediate method to gather the interrupt to send them
-		//as one 4 bit interrupt instead of 1000, 0100, 0001 etc.
+	if (this->northqueue == 0){
+		return NULL;
 	}
-}		
-void southTL(Controller *this, int northqueue, int southqueue){
 	
+	this->northqueue += carIncrease;
+	
+	//if(){
+	UDR0 = 0x1;	
+	//}
+}		
+int southTL(Controller *this, int carIncrease){
+	
+	if (this->southqueue == 0){
+		return NULL;
+	}
+	this->southqueue += carIncrease;
+	
+	//if(){
+	UDR0 = 0x2;
+	//}
 	
 }
-void bitwiseUSART(Controller *this){
+void bitwiseUSART(Controller *this, uint8_t Data){
 	
-	if(self )
-	{
+	if((Data & 1) == 1){			//Bit 0. Northbound car arrival sensor activated
+		northTL(this, 1);
 	}
-	if(this )
-	{
+	if(((Data >> 1) & 1) == 1){		//Bit 1. Northbound bridge entry sensor activated
+		northTL(this, -1);
 	}
-	if(this )
-	{
+	if(((Data >> 2) & 1) == 1){		//Bit 2. Southbound car arrival sensor activated
+		southTL(this, 1);
 	}
-	if(this )
-	{
+	if(((Data >> 3) & 1) == 1){		//Bit 3. Southbound bridge entry sensor activated
+		southTL(this, -1);
 	}
 }
 

@@ -17,7 +17,7 @@ typedef struct{
 	Object super;
 	AVRGUI *gui;
 	Controller *cont;
-	//int receivedUSART;		//This must be changed when interrupt is received from USART PC.
+	//int receivedUSART;			//This must be changed when interrupt is received from USART PC.
 	//int sendtoAVRGUI;			//Used for sending LCD data to GUI. When receiving or sending USART, the LCD must display segments.
 	//int sendtoController;		//Used for sending control data to Controller. Used for creating USART message to be sent.
 }USART;

@@ -7,7 +7,7 @@
 
 #ifndef __CONTROLLER_H_
 #define __CONTROLLER_H_
-
+#include "avr/io.h"
 
 
 typedef struct{
@@ -18,9 +18,9 @@ typedef struct{
 	//USART receivedUSART;
 }Controller;
 
-void northTL(Controller *this, int northqueue, int southqueue);		//TrafficLight methods. Used for switching between ON/OFF State.
-void southTL(Controller *this, int northqueue, int southqueue);
-void bitwiseUSART(Controller *this);
+void northTL(Controller *this, int carIncrease);		//TrafficLight methods. Used for switching between ON/OFF State.
+void southTL(Controller *this, int carIncrease);
+void bitwiseUSART(Controller *this, uint8_t Data);
 
 #define initController(northqueue,southqueue,timer){initObject(),northqueue,southqueue,timer};
 
