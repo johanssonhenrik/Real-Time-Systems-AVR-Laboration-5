@@ -1,16 +1,15 @@
-﻿/*
- * TrafficLights.h
- *
- * Created: 2014-03-07 16:20:36
- *  Author: ehioja-0
- */ 
+﻿
 
 
 #ifndef TRAFFICLIGHTS_H_
 #define TRAFFICLIGHTS_H_
 
+typedef struct {
 
+}TrafficLight;
 
+void northlight();
+void southlight();
 
 
 #endif /* TRAFFICLIGHTS_H_ */

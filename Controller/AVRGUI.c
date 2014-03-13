@@ -36,7 +36,7 @@ void writeChar(AVRGUI *self, int pos, int bokstav){
 	}else{
 		mask = 0xF0;                /* Position 0, 2, 4  */
 	}
-	if(bokstav<= 9 && bokstav >= 0){
+	if(bokstav<= 99 && bokstav >= 0){
 		//karaktar = self->pulse1->ASCII_TABLE[(int)bokstav]; // -> samma som : (*g).ASCII_TABLE
 		karaktar = ASCII_TABLE[(int)bokstav];
 	}else{
@@ -54,44 +54,46 @@ void writeChar(AVRGUI *self, int pos, int bokstav){
 		lcddr += 5;
 	}
 }
-void printat(AVRGUI *self, int pulseActive){
+void printat(AVRGUI *self, int pulseActive, int Data){
 
-	//int num;
-	//int pp;
-	//if(pulseActive == 0){
-		//num = self->northqueue->northqueue;
-		//pp = 0;
-		//num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,	'0' = 48.
-		//writechar(self, pp, num);					//&self -> address, self -> värde.
-		//pp = 1;
-		//num = ((self->northqueue->northqueue % 10));			//num % 10 + '0', pp,
-		//writechar(self, pp, num);
-	//}else{
-		//num = self->southqueue->southqueue;
-		//pp = 3;
-		//num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,
-		//writechar(self, pp, num);
-		//pp = 4;
-		//num = ((self->southqueue->southqueue % 10));		//num % 10 + '0', pp,
-		//writechar(self, pp, num);
-	//}
-}
-void update(AVRGUI* self, int numInQueue){
-	writeChar(self, 0, numInQueue);							//pulseActive 0..
-	writeChar(self, 1, numInQueue);							//or 1.
-	
+	int num;
+	int pp;
+	if(pulseActive == 0){
+		num = Data;
+		pp = 0;
+		num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,	'0' = 48.
+		writeChar(self, pp, num);					//&self -> address, self -> värde.
+		pp = 1;
+		num = ((Data % 10));			//num % 10 + '0', pp,
+		writeChar(self, pp, num);
+	}else{
+		num = Data;
+		pp = 3;
+		num = (((num % 100)/10));					//(num % 100) / 10 + '0', pp,
+		writeChar(self, pp, num);
+		pp = 4;
+		num = ((Data % 10));		//num % 10 + '0', pp,
+		writeChar(self, pp, num);
+	}
 }
 
-void writeSegment(AVRGUI *self, int northqueue, int southqueue){
+void updateNorth(AVRGUI* self, int numInQueue){
+	printat(self, 0, numInQueue);						
+}
+void updateSouth(AVRGUI* self, int numInQueue){			
+	printat(self, 3, numInQueue);							
+}
+
+void writeSegment(AVRGUI *self, int interruptfrompc){
 	
-	//if(self->pulseUsed == 0){							//To check where we are. Move from current pulse to the next.								
-		//LCDDR17 = 0x10 | LCDDR17;						//default pulseUsed = 1. (pulse2)
-		//LCDDR16 = 0xFE & LCDDR16;
-		//self->pulseUsed = 1;
-		//
-	//}else if(self->pulseUsed == 1){
-		//LCDDR17 = 0xEF & LCDDR17;
-		//LCDDR16 = 0x01 | LCDDR16;
-		//self->pulseUsed = 0;
-	//}
+	if(interruptfrompc == 1){							//To check where we are. Move from current pulse to the next.								
+		LCDDR17 = 0x10 | LCDDR17;						//default pulseUsed = 1. (pulse2)
+		LCDDR16 = 0xFE & LCDDR16;
+		
+		
+	}else if(interruptfrompc == 0){
+		LCDDR17 = 0xEF & LCDDR17;
+		LCDDR16 = 0x01 | LCDDR16;
+		
+	}
 }

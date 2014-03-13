@@ -9,7 +9,7 @@
 
 void receivedUSARTfromPC(USART *self){
 
-	uint8_t Data = UDR0;	
+	uint8_t Data = UDR0;
 	ASYNC(self->cont,bitwiseUSART,Data);
 }
 void start(USART *self){

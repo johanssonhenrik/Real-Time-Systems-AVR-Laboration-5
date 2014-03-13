@@ -13,10 +13,12 @@ typedef struct{
 	Object super;
 }AVRGUI;
 
-//void writeSegment(AVRGUI *this, int northqueue, int southqueue);
+void writeSegment(AVRGUI *this, int interruptfrompc);
 void writeChar(AVRGUI *self, int pos, int bokstav);
-void update(AVRGUI* self, int numInQueue);
-void printat(AVRGUI* self, int pulseActive);
+//void update(AVRGUI* self, int numInQueue);
+void updateNorth(AVRGUI* self, int numInQueue);
+void updateSouth(AVRGUI* self, int numInQueue);
+void printat(AVRGUI* self, int pulseActive, int Data);
 
 #define initAVRGUI(){initObject()};
 

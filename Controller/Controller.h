@@ -27,7 +27,7 @@ typedef struct{
 void northTL(Controller *this, int carDecInc);		//TrafficLight methods. Used for switching between ON/OFF State.
 void southTL(Controller *this, int carDecInc);
 void bitwiseUSART(Controller *this, uint8_t Data);
-void sendtoPC(Controller *this);
+void sendtoPC(Controller *this, uint8_t Data);
 
 #define initController(northqueue,southqueue,timer,maxiterationNorth,maxiterationSouth,gui,Data){initObject(),northqueue,southqueue,timer,maxiterationNorth,maxiterationSouth,gui,Data};
 
