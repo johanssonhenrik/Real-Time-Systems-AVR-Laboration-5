@@ -9,6 +9,9 @@
 
 //S-R | S-G | N-R | N-G
 
+uint8_t SR,SG,NR,NG;
+uint8_t DERP = 0x9;
+
 void northTL(Controller *this, int carDecInc){
 	
 	if((this->northqueue == 0) && (carDecInc < 0)){		//Can't Decrease if Queue is already zero.
@@ -22,24 +25,28 @@ void northTL(Controller *this, int carDecInc){
 		this->northqueue += carDecInc;
 		ASYNC(this->gui,updateNorth,this->northqueue);
 	}
-//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
 	
-	if(((this->northqueue)/(this->southqueue))> ){
-	}
-	
-	if((((this->southqueue) == 0) && ((this->northqueue) != 0))){									
+	if((((this->northqueue) != 0) && ((this->southqueue) == 0))){			//Prioritise northqueue if southqueue == 0.  
+		
+
+		SYNC(this->Data,sendtoPC,DERP);						//N-G,S-R
+		ASYNC(this->gui,updateNorth,this->northqueue);
+		
+	}else if(((this->northqueue) - (this->southqueue))<=3 && ((this->northqueue) - (this->southqueue))>0 && ((this->southqueue) == 0)){
 		ASYNC(this->Data,sendtoPC,0x9);						//N-G,S-R
 		ASYNC(this->gui,updateNorth,this->northqueue);
-	}
-	
-	if((((this->northqueue) - (this->southqueue))>3) && (this->maxiterationNorth) < 5 && (carDecInc < 0)){							
-		ASYNC(this->Data,sendtoPC,0x9);						//N-G,S-R
-		this->maxiterationNorth += 1;
-	}
-	if(((this->southqueue) - (this->northqueue)) > 6){
-		ASYNC(this->Data,sendtoPC,0x6);						//S-G,N-R
-		ASYNC(this->gui,updateSouth,this->southqueue);
-		this->maxiterationNorth = 0;
+		
+	}else if(((this->northqueue) - (this->southqueue))>3 && (this->maxiterationNorth) == 0 && (this->maxiterationSouth) == 0){
+		this->maxiterationNorth = (this->northqueue)/(this->southqueue);
+		
+	}else if(this->maxiterationNorth != 0 && this->maxiterationSouth == 0){
+		//AFTER(MSEC(1000),this->Data,sendtoPC,0x9);				
+		ASYNC(this->Data,sendtoPC,0x9);						//N-G,S-R		
+		ASYNC(this->gui,updateNorth,this->northqueue);
+		this->maxiterationNorth -= 1;
+		
+		//northTL(this,-1);
 	}
 }	
 	
@@ -58,22 +65,26 @@ void southTL(Controller *this, int carDecInc){
 	}
 	//-----------------------------------------------------------------------------
 	
-	if((((this->northqueue) == 0) && ((this->southqueue) != 0))){								
-		ASYNC(this->Data,sendtoPC,0x6);						//S-G,N-R
+	if((((this->southqueue) != 0) && ((this->northqueue) == 0))){			//Prioritise northqueue if southqueue == 0.
+		ASYNC(this->Data,sendtoPC,0x6);						//N-R,S-G
 		ASYNC(this->gui,updateSouth,this->southqueue);
-	}
-	
-	if((((this->southqueue) - (this->northqueue))>3) && (this->maxiterationSouth) < 5 && (carDecInc < 0)){		
-		ASYNC(this->Data,sendtoPC,0x6);						//S-G,N-R
-		this->maxiterationSouth += 1;
-	}
-	if(((this->southqueue) - (this->northqueue)) > 6){
-		ASYNC(this->Data,sendtoPC,0x6);						//S-G,N-R
+		
+	}else if( ((this->southqueue) - (this->northqueue))<=3 && ((this->southqueue) - (this->northqueue))>0 && ((this->northqueue) == 0)){
+		ASYNC(this->Data,sendtoPC,0x6);						//N-R,S-G
 		ASYNC(this->gui,updateSouth,this->southqueue);
-		this->maxiterationNorth = 0;
+		
+	}else if(((this->southqueue) - (this->northqueue))>3 && (this->maxiterationSouth) == 0 && (this->maxiterationNorth) == 0){
+		this->maxiterationSouth = (this->southqueue)/(this->northqueue);
+		
+	}else if(this->maxiterationSouth != 0 && this->maxiterationNorth == 0){
+		//AFTER(MSEC(1000),this->Data,sendtoPC,0x6);
+		ASYNC(this->Data,sendtoPC,0x6);						//N-R,S-G
+		ASYNC(this->gui,updateSouth,this->southqueue);
+		this->maxiterationSouth -= 1;
+		//southTL(this,-1);	
 	}
-	
 }
+
 void bitwiseUSART(Controller *this, uint8_t Data){		//Calls each method. Good to have when queues are empty the first time.
 	
 	if((Data & 1) == 1){			//Bit 0. Northbound car arrival sensor activated
