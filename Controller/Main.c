@@ -12,11 +12,10 @@
 #include "Init.h"
 
 AVRGUI g = initAVRGUI();							//northqueue, southqueue
-Controller c = initController(0,0,0,0,0,&g,0);		//northqueue,southqueue,timer,maxiteration
+Controller c = initController(0,0,&g,0,3);			//northqueue,southqueue, gui, data,previousqueue
 USART u = initUSARTinterrupt(&c);					//receivedUSART
 
 int main(void){
-
 	Init();
 	INSTALL(&u, receivedUSARTfromPC, IRQ_USART0_RX);
 	sei();
