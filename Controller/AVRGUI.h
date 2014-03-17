@@ -1,4 +1,4 @@
-﻿/*
+/*
  * AVRGUI.h
  *
  * Created: 2014-03-10 12:45:12
@@ -13,9 +13,8 @@ typedef struct{
 	Object super;
 }AVRGUI;
 
-void writeSegment(AVRGUI *this, int interruptfrompc);
+void writeSegment(AVRGUI *self, int interruptfrompc);
 void writeChar(AVRGUI *self, int pos, int bokstav);
-//void update(AVRGUI* self, int numInQueue);
 void updateNorth(AVRGUI* self, int numInQueue);
 void updateSouth(AVRGUI* self, int numInQueue);
 void printat(AVRGUI* self, int pulseActive, int Data);
