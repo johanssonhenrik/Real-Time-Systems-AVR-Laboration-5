@@ -12,65 +12,63 @@
 int openserialport();
 void serialwrite(uint8_t);
 int serialread();
+void input();
 void *GUI(void *a);
 void *lights(void *a);
-void input();
+void *Gate(void *a);
 
 pthread_t bridgecontroll;
 pthread_t gui;
+pthread_t gate;
 
 int fd;
-int North = 100;
-int South = 100;
+int North = 0;
+int South = 0;
 int RedS = 1;
-int RedN = 0;
+int RedN = 1;
 int GreenS = 0;
-int GreenN = 1;
+int GreenN = 0;
+int i = 0;
+int x = 10;
 uint8_t serialIn;
 
 int main(void){
-
-openserialport(); // Initializes the serial port with 9600 Baud, 8 start bits, 2 stop bits.
-pthread_create(&bridgecontroll, NULL, lights, 0); // thread, attributes?, method and argument
-//serialread();
-pthread_create(&gui, NULL, GUI, 0); // thread, attributes?, method and argument
-input();
+	printf("\033[2J");
+	openserialport(); // Initializes the serial port with 9600 Baud, 8 start bits, 2 stop bits.
+	pthread_create(&bridgecontroll, NULL, lights, 0); // thread, attributes?, method and argument
+	//serialread();
+	pthread_create(&gui, NULL, GUI, 0); // thread, attributes?, method and argument
+	pthread_create(&gate, NULL, Gate, 0);
+	input();
 }
 
 void *GUI(void *a){
-int i = 0;
-int j = 3;
-int x = 10;
-printf("\033[2J");
+
+	printf("\033[2J");
 	while(1){
-		//usleep(500000);
+		if(RedS == 1 && RedN == 1){usleep(500000);}
 		printf("\033[1;0H");
-        printf("     R%i            R%i \n", RedN, RedS);
-        printf("     G%i            G%i \n", GreenN , GreenS);
+        printf("     R%i          R%i \n", RedN, RedS);
+        printf("     G%i          G%i \n", GreenN , GreenS);
         printf("-----N%i", North);
 		printf("----------S%i----\n", South);
 		
 		if(RedS == 0){
-			printf("----------");
+			printf("       ----------");
 			printf("\033[%iD",i);
 			printf("c");
-			/*
-			printf("\033[%iC",i);
-			printf("\033[%iD",j);
-			printf("c");
-			*/
 			if(i<10){
 				i++;
 			}else if(i == 10){
 				printf("\033[1D");
 				printf("-");
+				i = 0;
 			}
-			//j++;
 			printf("\n\033[1A\033[2K");
 			usleep(500000);
 		}
 		if(RedN == 0){
-			printf("----------");
+			printf("       ----------");
 			printf("\033[%iD",x);
 			printf("c");
 			if(x>0){
@@ -78,6 +76,7 @@ printf("\033[2J");
 			}else if(x == 0){
 				printf("\033[1D");
 				printf("-");
+				x = 10;
 			}
 			printf("\n\033[1A\033[2K");
 			usleep(500000);
@@ -156,6 +155,46 @@ void input(){
 	}
 }
 
+void *Gate(void *a){
+	
+	/*
+	while(1){
+		if(GreenN == 1 && RedN == 0){
+			North--;
+			serialwrite(0x2);	// Northbound bridge entry
+			usleep(1000000); // 1 sec
+		}else if(GreenS == 1 && RedS == 0){
+			South--;
+			serialwrite(0x8);	// Southbound bridge entry
+			usleep(1000000); // 1 sec
+		}
+	}
+	*/
+	while(1){
+		while(GreenN == 1 && RedN == 0){
+			North--;
+			serialwrite(0x2);	// Northbound bridge entry
+			usleep(1000000); // 1 sec
+		}
+		if(RedS == 0){
+			usleep(5000000); // 5 sec
+			i = 0;
+			x = 10;
+		}
+		
+		while(GreenS == 1 && RedS == 0){
+			South--;
+			serialwrite(0x8);	// Southbound bridge entry
+			usleep(1000000); // 1 sec
+		}
+		if(RedN == 0){
+			usleep(5000000); // 5 sec
+			i = 0;
+			x = 10;
+		}
+	}
+}
+
 void *lights(void *a){
 	while(1){
 		int data = read(fd, &serialIn, sizeof(serialIn));
@@ -177,15 +216,6 @@ void *lights(void *a){
 			GreenS = 0;
 			}
 		}
-		usleep(500000);
-		if(GreenN == 1 && RedN == 0){
-			North--;
-			serialwrite(0x2);	// Northbound bridge entry
-		}else if(GreenS == 1 && RedS == 0){
-			South--;	
-			serialwrite(0x8);	// Southbound bridge entry
-		}
-		
-	//fflush(stdin);
+		usleep(50000);
 	}
 }
