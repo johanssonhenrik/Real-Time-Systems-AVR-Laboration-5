@@ -1,4 +1,4 @@
-﻿/*
+/*
  * AVRGUI.c
  *
  * Created: 2014-03-10 12:45:01
@@ -90,10 +90,12 @@ void writeSegment(AVRGUI *self, int interruptfrompc){
 		LCDDR17 = 0x10 | LCDDR17;						//default pulseUsed = 1. (pulse2)
 		LCDDR16 = 0xFE & LCDDR16;
 		
-		
 	}else if(interruptfrompc == 0){
 		LCDDR17 = 0xEF & LCDDR17;
 		LCDDR16 = 0x01 | LCDDR16;
 		
+	}else if(interruptfrompc == 2){
+		LCDDR2 = 0x4F | LCDDR2;
 	}
+	
 }
