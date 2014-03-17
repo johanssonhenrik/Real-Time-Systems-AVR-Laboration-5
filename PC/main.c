@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
+
 #define SERIAL_PORT "/dev/ttyS0"
 
 int openserialport();
@@ -30,6 +31,7 @@ int GreenS = 0;
 int GreenN = 0;
 int i = 0;
 int x = 10;
+int j;
 uint8_t serialIn;
 
 int main(void){
@@ -45,6 +47,68 @@ int main(void){
 void *GUI(void *a){
 
 	printf("\033[2J");
+
+	printf("     R%i          R%i \n", RedN, RedS);
+	printf("     G%i          G%i \n", GreenN , GreenS);
+	printf("-----N%i", North);
+	printf("----------S%i----", South);
+	
+	while(1){
+		fflush(stdout);
+		if(RedS == 1 && RedN == 1){usleep(500000);}
+		//usleep(250000);
+		printf("\033[1;7H");
+		printf("%i", RedN);
+	
+		printf("\033[2;7H");
+		printf("%i", GreenN);
+	
+		printf("\033[3;7H");
+		printf("%i-", North);
+	
+		printf("\033[1;19H");
+		printf("%i", RedS);
+	
+		printf("\033[2;19H");
+		printf("%i", GreenS);
+	
+		printf("\033[3;19H");
+		printf("%i-", South);
+		printf("\033[5;0H");
+
+		if(RedS == 0){
+			//printf("                 ");
+			printf("\033[17C");
+			printf("\033[%iD",i);
+			printf("c");
+			if(i<10){
+				i++;
+			}else if(i == 10){
+				//printf("\033[1D");
+				i = 0;
+			}
+			printf("\n\033[1A\033[2K");
+			usleep(500000);
+
+		}
+		if(RedN == 0){
+			//printf("                 ");
+			printf("\033[17C");
+			printf("\033[%iD",x);
+			printf("c");
+			if(x>0){
+				x--;
+			}else if(x == 0){
+				//printf("\033[1D");
+				//printf("-");
+				x = 10;
+			}
+			printf("\n\033[1A\033[2K");
+			usleep(500000);
+		}
+	}
+	
+	/*
 	while(1){
 		if(RedS == 1 && RedN == 1){usleep(500000);}
 		printf("\033[1;0H");
@@ -83,6 +147,7 @@ void *GUI(void *a){
 		}
         printf("\n\033[1A\033[2K");
 	}
+	*/
 }
 
 int openserialport(){
@@ -144,6 +209,9 @@ void input(){
 	// The main thread waits for keyboard inputs.
 	while(1){
 		char character = getchar();
+		//char character[1];
+		//fgets(character, 1, stdin);
+		
 		if(character == 'a'){
 		serialwrite(0x1);	// Northbound car arrival, bit 0
 		North++;
@@ -152,6 +220,7 @@ void input(){
 		serialwrite(0x4);	// Southbound car arrival, bit 2
 		South++;
 		}
+		fflush(stdin);
 	}
 }
 
