@@ -87,8 +87,9 @@ void *GUI(void *a){
 				//printf("\033[1D");
 				i = 0;
 			}
-			printf("\n\033[1A\033[2K");
 			usleep(500000);
+			printf("\n\033[1A\033[2K");
+			
 
 		}
 		if(RedN == 0){
@@ -103,8 +104,10 @@ void *GUI(void *a){
 				//printf("-");
 				x = 10;
 			}
-			printf("\n\033[1A\033[2K");
 			usleep(500000);
+			printf("\n\033[1A\033[2K");
+			
+
 		}
 	}
 	
@@ -163,7 +166,7 @@ int openserialport(){
 	tcflush(fd, TCIFLUSH);
 	// INPCK added....
 	serterm.c_cflag = B9600 | CS8 | CSTOPB | CREAD | CLOCAL | HUPCL | INPCK;
-	serterm.c_lflag &= ~ICANON;
+	serterm.c_lflag &= ~(ECHO | ECHONL | ICANON);
 	serterm.c_cc[VTIME] = 10;
 	serterm.c_cc[VMIN] = 1;
 	cfsetispeed(&serterm, B9600);
@@ -206,11 +209,24 @@ int serialread(){
 }
 
 void input(){
+	
+	fd_set rfds;
+	fcntl(fileno(stdin), F_SETFL, O_NONBLOCK);
+	
+	struct termios ttystate;
+	tcgetattr(STDIN_FILENO, &ttystate);
+	ttystate.c_lflag &= ~(ICANON | ECHO);
+	ttystate.c_cc[VMIN] = 1;
+	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
+
+	
 	// The main thread waits for keyboard inputs.
 	while(1){
+		
+		//FD_ZERO(&rfds);
+		//FD_SET(fileno(stdin), &rfds);
+
 		char character = getchar();
-		//char character[1];
-		//fgets(character, 1, stdin);
 		
 		if(character == 'a'){
 		serialwrite(0x1);	// Northbound car arrival, bit 0
@@ -221,6 +237,7 @@ void input(){
 		South++;
 		}
 		fflush(stdin);
+		//}
 	}
 }
 
